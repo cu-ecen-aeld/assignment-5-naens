@@ -1,0 +1,37 @@
+#!/bin/sh
+
+reg()
+{
+    name=$1
+    major=$(awk "\$2==\"$name\" {print \$1}" /proc/devices)
+    rm -f /dev/${name}
+    mknod /dev/${name} c $major 0
+}
+
+unreg()
+{
+    name=$1
+    rm -f /dev/${name}
+}
+
+if [ "$1" = start ]
+then
+    insmod /lib/modules/$(uname -r)/extra/scull.ko
+    reg scull
+
+    insmod /lib/modules/$(uname -r)/extra/faulty.ko
+    reg faulty
+
+    insmod /lib/modules/$(uname -r)/extra/hello.ko
+fi
+
+if [ "$1" = stop ]
+then
+    rmmod /lib/modules/$(uname -r)/extra/scull.ko
+    unreg scull
+
+    rmmod /lib/modules/$(uname -r)/extra/faulty.ko
+    unreg faulty
+
+    rmmod /lib/modules/$(uname -r)/extra/hello.ko
+fi
