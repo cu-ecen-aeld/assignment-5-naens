@@ -1,0 +1,4 @@
+config BR2_PACKAGE_AESDCHAR
+	bool "aesd char device"
+	help
+	  Package aesdchar for assignment 8

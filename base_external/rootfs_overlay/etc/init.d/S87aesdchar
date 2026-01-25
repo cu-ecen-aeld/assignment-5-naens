@@ -1,0 +1,19 @@
+#!/bin/sh
+
+dev_file=/dev/aesdchar
+
+if [ "$1" = start ]
+then
+    insmod /lib/modules/$(uname -r)/extra/aesdchar.ko
+    minor=0
+    major=$(awk '$2=="aesdchar" {print $1}' /proc/devices)
+    rm -vf ${dev_file}
+    echo "making character special file ${dev_file} major=${major} minor=${minor}"
+    mknod ${dev_file} c ${major} ${minor}
+fi
+
+if [ "$1" = stop ]
+then
+    rmmod /lib/modules/$(uname -r)/extra/aesdchar.ko
+    rm -vf ${dev_file}
+fi
